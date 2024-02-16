@@ -99,18 +99,16 @@ func newFromPolicy(c policy, logger *zap.SugaredLogger) (*server, error) {
 	return out, nil
 }
 
-func (s *server) AuthenticateSubject(_ context.Context, req *authentication.AuthenticateSubjectRequest) (*authentication.AuthenticateSubjectResponse, error) {
-	s.logger.Info("received AuthenticateSubject request")
+func (s *server) ValidateCredential(_ context.Context, req *authentication.ValidateCredentialRequest) (*authentication.ValidateCredentialResponse, error) {
+	s.logger.Info("received ValidateCredential request")
 
 	sub, ok := s.tokens[req.Credential]
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid credential")
 	}
 
-	resp := &authentication.AuthenticateSubjectResponse{
-		SubjectClaims: map[string]string{
-			"sub": sub.ID,
-		},
+	resp := &authentication.ValidateCredentialResponse{
+		SubjectId: sub.ID,
 	}
 
 	return resp, nil
